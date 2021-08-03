@@ -1,29 +1,51 @@
 'use strict';
 const express = require('express');
-const srver = express();
+const server = express();
+const cors = require('cors');
 const weatherData = require('./data/weather.json');
-const PORT = 3000;
+require('dotenv').config();
+server.use(cors());
+const PORT = process.env.PORT;
+
 
 
 //http://localhost:3000/(/ ===root rout)
-srver.get('/', (req, res) => {
-    res.send('hi from the root route');
+server.get('/', (req, res) => {
+  res.send('hi from the root route');
 });
 
-//http://localhost:3000/test(/test===route)
-srver.get('/test', (request, response) => {
-    let str = 'hello from the server side';
-    response.send(str);
+//http://localhost:3000/getcityNames(/test===route)
+server.get('/getcityNames', (request, response) => {
+  let cityNames = weatherData.map((item) => {
+    return item.city_name;
+  });
+  response.send(cityNames);
+
 });
+//http://localhost:3000/getLon
+server.get('/getLon, (request, response') => {
+  let getLon = weatherData.map((item) => {
+    return item.lon;
+  });
+  response.send(getLon);
+});
+//http://localhost:3000/getLot
+
+srver.get('/getLot', (request, response) => {
+    let getLot = weatherData.map((item) => {
+      return item.getLot;
+    });
+    response.send(getLot);
+  
+  });
+
 
 //http://localhost:3000/(/getweather)
-srver.listen(PORT, () => {
-    console.log(`I am listening on PORT=${PORT}`);
+server.listen(PORT, () => {
+  console.log(`I am listening on PORT=${PORT}`);
 
-    let cityNames = weatherData.map((item) => {
-        return item.city_name;
-        // console.log(item.city_name);
-    })
-    res.send(cityNames);
+  server.get('*',(req,res)=>{
+    res.status(404).send('page not found');
+  });
 
 });
