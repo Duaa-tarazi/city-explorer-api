@@ -5,23 +5,46 @@ const cors = require('cors');
 const weatherData = require('./data/weather.json');
 require('dotenv').config();
 server.use(cors());
-const PORT = process.env.PORTف
+const PORT = process.env.PORT;
 
-class Forecast{
-  constructor(date,description){
-    this.date=date;
-    this.description=description;
+// class Forecast {
+//   constructor(date, description) {
+//     this.date = date;
+//     this.description = description;
+//   }
+// }
+// const CreateForcastObj = weatherObjList => {
+//   const forcastObjList = [];
+//   weatherObjList.data.map(item => {
+//     const description = `Low of ${item.low_temp}, high of ${item.high_temp} with ${item.weather.description}`;
+//     const date = item.datetime;
+//     forcastObjList.push(new CreateForcastObj(date, description));
+//   });
+//   return forcastObjList;
+// };
+class weather1 {
+  constructor(d) {
+    this.date = d.valid_date;
+    this.description = d.weather.description;
   }
-} 
-const createForcastObj = weatherObjList =>{
-  const forcastObjList = [];
-  weatherObjList.data.map( item => {
-      const description = `Low of ${item.low_temp}, high of ${item.high_temp} with ${item.weather.description}`;
-      const date = item.datetime;
-      forcastObjList.push(new Forcast(date, description));
+}
+
+server.get('/weather', (request, response) => {
+  let a = request.query.searchQuery;
+  let b = a.split(',');
+
+  let loc = b[0];
+
+  var data = weatherData.find((element) => {
+    return element.city_name.toLowerCase() === loc.toLowerCase();
   });
-  return forcastObjList;
-};
+  let status = data.data.map((e) => new weather1(e));
+  console.log(status);
+  response.send(status);
+});
+
+
+
 
 //http://localhost:3000/(/ ===root rout)
 server.get('/', (req, res) => {
@@ -29,21 +52,22 @@ server.get('/', (req, res) => {
 });
 
 // http://localhost:3000/weather?lat=31.95&lon=35.91&searchQuery=Amman
-server.get('/weather',(request, response) => { 
-  let lat=request.query.lat;
-  let lon=request.query.lon;
-  let cityName=request.query.searchQuery;
-  console.log(lat,lon,cityName,'duaa',weatherData[0].city_name);
-  const weather=weatherData.find(item => item.city_name.toLowerCase() ===cityName.toLowerCase() ? item:'');
-  console.log(weather,'duaa2');
-  response.send(weather);
-});
+// server.get('/weather', (request, response) => {
+//   let lat = request.query.lat;
+//   let lon = request.query.lon;
+//   let cityName = request.query.searchQuery;
+//   //console.log(lat,lon,cityName,'duaa',weatherData[0].city_name);
+//   const weather = weatherData.find(item => item.city_name.toLowerCase() === cityName.toLowerCase() ? item : '');
+//   response.send(weather);
+// });
+
+
 //http://localhost:3000/getLonLat
 server.get('/getLonLat', (request, response) => {
-  let getLonLat= weatherData.map((item) => {
-    return (item.Lon,item.lat);
+  let getLonLat = weatherData.map((item) => {
+    return (item.Lon, item.lat);
   });
-  let getLat=weatherData.map((item) => {
+  let getLat = weatherData.map((item) => {
     return item.lat;
   });
   response.send(getLonLat);
@@ -63,7 +87,7 @@ server.get('/getLat', (request, response) => {
 //http://localhost:3000/getweather
 
 server.get('/getweather', (request, response) => {
-  let getweather= weatherData.map((item) => {
+  let getweather = weatherData.map((item) => {
     return item.weather.description;
   });
   response.send(getweather);
@@ -71,26 +95,9 @@ server.get('/getweather', (request, response) => {
 });
 
 
-class Forcast {
-  constructor(date = '', description =''){
-    this.date = date;
-    this.description = description;
-  }
-}
 
-const createForcastObj = weatherObjList =>{
-  const forcastObjList = [];
-  weatherObjList.data.map( item => {
-      const description = `Low of ${item.low_temp}, high of ${item.high_temp} with ${item.weather.description}`;
-      const date = item.datetime;
-      forcastObjList.push(new Forcast(date, description));
-  });
-  return forcastObjList;
-};
-
-
-server.listen(PORT, () => {
-  console.log(`I am listening on PORT=${PORT}`);
+server.listen(process.env.PORT, () => {
+  console.log(`I am listening on PORT=${process.env.PORT}`);
 
   server.get('*', (req, res) => {
     res.status(404).send('page not found');
