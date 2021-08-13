@@ -156,7 +156,7 @@ const axios = require('axios');
 const app = express();
 app.use(cors());
 
-const PORT = 3002;
+const PORT =process.env.PORT;
 
 //http://localhost:3002/weather?city=amman
 app.get('/weather', getWeather);
